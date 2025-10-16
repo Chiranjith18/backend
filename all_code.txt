@@ -1,0 +1,2341 @@
+===== ./src/test/java/com/examly/springapp/SpringappApplicationTests.java =====
+package com.examly.springapp;
+
+import java.io.File;
+import org.springframework.http.MediaType;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
+@SpringBootTest(classes = SpringappApplication.class)
+@AutoConfigureMockMvc
+class SpringappFoodTruckVendorTests {
+
+    @Autowired
+    private MockMvc mockMvc;
+
+    @Test
+    void controller_testAddFoodTruckVendor() throws Exception {
+        String vendorData = "{\"name\": \"Tasty Bites\", \"cuisineSpecialties\": \"Indian\", \"operatingRegion\": \"Chennai\", \"menuHighlights\": \"Butter Chicken, Paneer Tikka\", \"phoneNumber\": \"9876543210\"}";
+        mockMvc.perform(MockMvcRequestBuilders.post("/addVendor")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(vendorData)
+                .accept(MediaType.APPLICATION_JSON))
+                .andExpect(MockMvcResultMatchers.status().isCreated())
+                .andReturn();
+    }
+
+    @Test
+void exception_testAddFoodTruckVendor_InvalidOperatingRegion() throws Exception {
+    String vendorData = "{\"name\": \"Tasty Bites\", \"cuisineSpecialties\": \"Indian\", \"operatingRegion\": \"InvalidRegion\", \"menuHighlights\": \"Butter Chicken, Paneer Tikka\", \"phoneNumber\": \"9876543210\"}";
+
+    mockMvc.perform(MockMvcRequestBuilders.post("/addVendor")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(vendorData)
+            .accept(MediaType.APPLICATION_JSON))
+            .andExpect(MockMvcResultMatchers.status().isBadRequest())
+            .andExpect(MockMvcResultMatchers.jsonPath("$").value("Invalid operating region. Must be either Chennai or Bangalore."))
+            .andReturn();
+}
+
+    @Test
+    void controller_testGetAllFoodTruckVendors() throws Exception {
+        mockMvc.perform(get("/getAllVendors")
+                .accept(MediaType.APPLICATION_JSON))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$").isArray())
+                .andReturn();
+    }
+
+    @Test
+    public void controller_test_Controller_Directory_Exists() {
+        String directoryPath = "src/main/java/com/examly/springapp/controller";
+        File directory = new File(directoryPath);
+        assertTrue(directory.exists() && directory.isDirectory());
+    }
+
+    @Test
+    public void controller_test_FoodTruckVendorController_File_Exists() {
+        String filePath = "src/main/java/com/examly/springapp/controller/FoodTruckVendorController.java";
+        File file = new File(filePath);
+        assertTrue(file.exists() && file.isFile());
+    }
+
+    @Test
+    public void entity_test_Model_Directory_Exists() {
+        String directoryPath = "src/main/java/com/examly/springapp/model";
+        File directory = new File(directoryPath);
+        assertTrue(directory.exists() && directory.isDirectory());
+    }
+
+    @Test
+    public void entity_test_FoodTruckVendorModel_File_Exists() {
+        String filePath = "src/main/java/com/examly/springapp/model/FoodTruckVendor.java";
+        File file = new File(filePath);
+        assertTrue(file.exists() && file.isFile());
+    }
+
+    @Test
+    public void repository_test_Repository_Directory_Exists() {
+        String directoryPath = "src/main/java/com/examly/springapp/repository";
+        File directory = new File(directoryPath);
+        assertTrue(directory.exists() && directory.isDirectory());
+    }
+
+    @Test
+    public void service_test_Service_Directory_Exists() {
+        String directoryPath = "src/main/java/com/examly/springapp/service";
+        File directory = new File(directoryPath);
+        assertTrue(directory.exists() && directory.isDirectory());
+    }
+
+    @Test
+    public void service_test_FoodTruckvendorService_Class_Exists() {
+        checkClassExists("com.examly.springapp.service.FoodTruckVendorService");
+    }
+
+      
+      @Test
+      public void service_test_FoodTruckVendorModel_Class_Exists() {
+          checkClassExists("com.examly.springapp.model.FoodTruckVendor");
+      }
+
+    @Test
+    public void service_test_FoodTruckVendorModel_Has_name_Field() {
+        checkFieldExists("com.examly.springapp.model.FoodTruckVendor", "name");
+    }
+
+    @Test
+    public void service_test_FoodTruckVendorModel_Has_cuisineSpecialties_Field() {
+        checkFieldExists("com.examly.springapp.model.FoodTruckVendor", "cuisineSpecialties");
+    }
+
+    @Test
+    public void service_test_FoodTruckVendorModel_Has_operatingRegion_Field() {
+        checkFieldExists("com.examly.springapp.model.FoodTruckVendor", "operatingRegion");
+    }
+
+    @Test
+    public void service_test_FoodTruckVendorModel_Has_menuHighlights_Field() {
+        checkFieldExists("com.examly.springapp.model.FoodTruckVendor", "menuHighlights");
+    }
+
+    @Test
+    public void service_test_FoodTruckVendorModel_Has_phoneNumber_Field() {
+        checkFieldExists("com.examly.springapp.model.FoodTruckVendor", "phoneNumber");
+    }
+
+    @Test
+    public void repository_test_FoodTruckVendorRepo_Extends_JpaRepository() {
+        checkClassImplementsInterface("com.examly.springapp.repository.FoodTruckVendorRepo", "org.springframework.data.jpa.repository.JpaRepository");
+    }
+
+    @Test
+    public void config_test_CorsConfiguration_Class_Exists() {
+        checkClassExists("com.examly.springapp.configuration.CorsConfiguration");
+    }
+
+    @Test
+    public void config_test_CorsConfiguration_Has_Configuration_Annotation() {
+        checkClassHasAnnotation("com.examly.springapp.configuration.CorsConfiguration", "org.springframework.context.annotation.Configuration");
+    }
+
+    @Test
+    public void exception_test_InvalidOperatingRegionException_Class_Exists() {
+        checkClassExists("com.examly.springapp.exception.InvalidOperatingRegionException");
+    }
+
+     
+     @Test
+     public void exception_test_InvalidOperatingRegionException_Extends_RuntimeException() {
+         try {
+             Class<?> clazz = Class.forName("com.examly.springapp.exception.InvalidOperatingRegionException");
+             assertTrue(RuntimeException.class.isAssignableFrom(clazz),
+                     "InvalidOperatingRegionException should extend RuntimeException");
+         } catch (ClassNotFoundException e) {
+             fail("InvalidOperatingRegionException class does not exist.");
+         }
+     }
+
+    private void checkClassExists(String className) {
+        try {
+            Class.forName(className);
+        } catch (ClassNotFoundException e) {
+            fail("Class " + className + " does not exist.");
+        }
+    }
+
+    private void checkFieldExists(String className, String fieldName) {
+        try {
+            Class<?> clazz = Class.forName(className);
+            clazz.getDeclaredField(fieldName);
+        } catch (ClassNotFoundException | NoSuchFieldException e) {
+            fail("Field " + fieldName + " in class " + className + " does not exist.");
+        }
+    }
+
+    private void checkClassImplementsInterface(String className, String interfaceName) {
+        try {
+            Class<?> clazz = Class.forName(className);
+            Class<?> interfaceClazz = Class.forName(interfaceName);
+            assertTrue(interfaceClazz.isAssignableFrom(clazz));
+        } catch (ClassNotFoundException e) {
+            fail("Class " + className + " or interface " + interfaceName + " does not exist.");
+        }
+    }
+
+    private void checkClassHasAnnotation(String className, String annotationName) {
+        try {
+            Class<?> clazz = Class.forName(className);
+            Class<?> annotationClazz = Class.forName(annotationName);
+            assertTrue(clazz.isAnnotationPresent((Class<? extends java.lang.annotation.Annotation>) annotationClazz));
+        } catch (ClassNotFoundException e) {
+            fail("Class " + className + " or annotation " + annotationName + " does not exist.");
+        }
+    }
+}
+===== ./src/main/resources/application.properties =====
+
+spring.datasource.url=jdbc:mysql://sql12.freesqldatabase.com:3306/sql12803286?useSSL=false&serverTimezone=UTC
+spring.datasource.username=sql12803286
+spring.datasource.password=Rapis9WvDQ
+spring.datasource.driver-class-name=com.mysql.cj.jdbc.Driver
+spring.jpa.hibernate.ddl-auto=update
+spring.jpa.show-sql=true
+spring.jpa.properties.hibernate.format_sql=true
+spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.MySQL8Dialect
+
+
+
+server.port=8080
+
+# JWT Configuration
+jwt.secret=7ffNMsajDPZZtOWpN4JPUFonlH8E+GrcduPIVnJk8Wtw6hH/Mk9E/q6ZmDmVjKbY==
+jwt.expiration=86400000
+
+# Email
+spring.mail.host=smtp.gmail.com
+spring.mail.port=587
+spring.mail.username=727823tucs033@skct.edu.in
+spring.mail.password=chiranjith12345678
+spring.mail.properties.mail.smtp.auth=true
+spring.mail.properties.mail.smtp.starttls.enable=true
+spring.mail.properties.mail.smtp.starttls.required=true
+spring.mail.default-encoding=UTF-8
+
+# Async + scheduling
+spring.task.scheduling.pool.size=2
+===== ./src/main/java/com/examly/springapp/configuration/SwaggerConfig.java =====
+package com.examly.springapp.configuration;
+
+import io.swagger.v3.oas.models.Components;
+import io.swagger.v3.oas.models.OpenAPI;
+import io.swagger.v3.oas.models.info.Info;
+import io.swagger.v3.oas.models.security.SecurityRequirement;
+import io.swagger.v3.oas.models.security.SecurityScheme;
+
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+
+@Configuration
+public class SwaggerConfig {
+
+   @Bean
+public OpenAPI customOpenAPI() {
+    return new OpenAPI()
+        .info(new Info()
+            .title("Food Truck Vendor Application System API")
+            .version("1.0")
+            .description("API documentation for Food Truck Vendor Application System"))
+        .components(new Components().addSecuritySchemes("bearer-key",
+            new SecurityScheme()
+                .type(SecurityScheme.Type.HTTP)
+                .scheme("bearer")
+                .bearerFormat("JWT")))
+        .addSecurityItem(new SecurityRequirement().addList("bearer-key"));
+}
+
+ }
+   ===== ./src/main/java/com/examly/springapp/configuration/DataInitializer.java =====
+package com.examly.springapp.configuration;
+
+import com.examly.springapp.model.User;
+import com.examly.springapp.model.Role;
+import com.examly.springapp.repository.UserRepository;
+import org.springframework.boot.CommandLineRunner;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.security.crypto.password.PasswordEncoder;
+
+@Configuration
+public class DataInitializer {
+
+    @Bean
+    CommandLineRunner initDatabase(UserRepository userRepository, PasswordEncoder passwordEncoder) {
+        return args -> {
+            if (userRepository.count() == 0) {
+                // Create admin
+                User admin = new User();
+                admin.setEmail("admin@example.com");
+                admin.setPassword(passwordEncoder.encode("admin123"));
+                admin.setRole(Role.ADMIN);
+                userRepository.save(admin);
+
+                // Reviewer
+                User reviewer = new User();
+                reviewer.setEmail("reviewer@example.com");
+                reviewer.setPassword(passwordEncoder.encode("reviewer123"));
+                reviewer.setRole(Role.REVIEWER);
+                userRepository.save(reviewer);
+
+                // Inspector
+                User inspector = new User();
+                inspector.setEmail("inspector@example.com");
+                inspector.setPassword(passwordEncoder.encode("inspector123"));
+                inspector.setRole(Role.INSPECTOR);
+                userRepository.save(inspector);
+
+                // Vendor
+                User vendor = new User();
+                vendor.setEmail("vendor@example.com");
+                vendor.setPassword(passwordEncoder.encode("vendor123"));
+                vendor.setRole(Role.VENDOR);
+                userRepository.save(vendor);
+
+                // Super Admin
+                User superAdmin = new User();
+                superAdmin.setEmail("superadmin@example.com");
+                superAdmin.setPassword(passwordEncoder.encode("superadmin123"));
+                superAdmin.setRole(Role.SUPER_ADMIN);
+                userRepository.save(superAdmin);
+            }
+        };
+    }
+}
+===== ./src/main/java/com/examly/springapp/configuration/AsyncConfig.java =====
+package com.examly.springapp.configuration;
+
+import org.springframework.context.annotation.Configuration;
+import org.springframework.scheduling.annotation.EnableAsync;
+import org.springframework.context.annotation.Bean;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
+import java.util.concurrent.Executor;
+
+@Configuration
+@EnableAsync
+public class AsyncConfig {
+
+    @Bean(name = "taskExecutor")
+    public Executor taskExecutor() {
+      ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
+      executor.setCorePoolSize(2);
+      executor.setMaxPoolSize(5);
+      executor.setQueueCapacity(500);
+      executor.setThreadNamePrefix("EmailSender-");
+      executor.initialize();
+      return executor;
+    }
+}
+===== ./src/main/java/com/examly/springapp/model/Role.java =====
+package com.examly.springapp.model;
+
+public enum Role {
+    VENDOR,
+    ADMIN,
+    REVIEWER,
+    INSPECTOR,
+    SUPER_ADMIN
+}
+===== ./src/main/java/com/examly/springapp/model/FoodTruckVendor.java =====
+package com.examly.springapp.model;
+
+import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Pattern;
+
+@Entity
+public class FoodTruckVendor {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @NotBlank
+    private String name;
+
+    private String cuisineSpecialties;
+
+    @NotBlank
+    private String operatingRegion;
+
+    private String menuHighlights;
+
+    @Pattern(regexp = "^[6-9]\\d{9}$", message = "Invalid Indian phone number")
+    private String phoneNumber;
+
+    // Link to user
+    @OneToOne
+    @JoinColumn(name = "user_id", nullable = false, unique = true)
+    private User user;
+
+    public FoodTruckVendor() {}
+
+    public FoodTruckVendor(String name, String cuisineSpecialties, String operatingRegion, String menuHighlights, String phoneNumber, User user) {
+        this.name = name;
+        this.cuisineSpecialties = cuisineSpecialties;
+        this.operatingRegion = operatingRegion;
+        this.menuHighlights = menuHighlights;
+        this.phoneNumber = phoneNumber;
+        this.user = user;
+    }
+
+    public Long getId() { return id; }
+    public String getName() { return name; }
+    public void setName(String name) { this.name = name; }
+    public String getCuisineSpecialties() { return cuisineSpecialties; }
+    public void setCuisineSpecialties(String cuisineSpecialties) { this.cuisineSpecialties = cuisineSpecialties; }
+    public String getOperatingRegion() { return operatingRegion; }
+    public void setOperatingRegion(String operatingRegion) { this.operatingRegion = operatingRegion; }
+    public String getMenuHighlights() { return menuHighlights; }
+    public void setMenuHighlights(String menuHighlights) { this.menuHighlights = menuHighlights; }
+    public String getPhoneNumber() { return phoneNumber; }
+    public void setPhoneNumber(String phoneNumber) { this.phoneNumber = phoneNumber; }
+    public User getUser() { return user; }
+    public void setUser(User user) { this.user = user; }
+}
+===== ./src/main/java/com/examly/springapp/model/AuditLog.java =====
+package com.examly.springapp.model;
+
+import jakarta.persistence.*;
+import java.time.LocalDateTime;
+import java.util.UUID;
+
+@Entity
+public class AuditLog {
+
+    @Id
+    @GeneratedValue
+    private UUID id;
+
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private User user;
+
+    private String ipAddress;
+    private LocalDateTime timestamp;
+    private String module;
+    private String operation;
+
+    @Column(length = 2000)
+    private String details;
+
+    public AuditLog() {}
+
+    public AuditLog(User user, String ipAddress, LocalDateTime timestamp,
+                    String module, String operation, String details) {
+        this.user = user;
+        this.ipAddress = ipAddress;
+        this.timestamp = timestamp;
+        this.module = module;
+        this.operation = operation;
+        this.details = details;
+    }
+
+    public UUID getId() { return id; }
+    public User getUser() { return user; }
+    public void setUser(User user) { this.user = user; }
+    public String getIpAddress() { return ipAddress; }
+    public void setIpAddress(String ipAddress) { this.ipAddress = ipAddress; }
+    public LocalDateTime getTimestamp() { return timestamp; }
+    public void setTimestamp(LocalDateTime timestamp) { this.timestamp = timestamp; }
+    public String getModule() { return module; }
+    public void setModule(String module) { this.module = module; }
+    public String getOperation() { return operation; }
+    public void setOperation(String operation) { this.operation = operation; }
+    public String getDetails() { return details; }
+    public void setDetails(String details) { this.details = details; }
+}
+===== ./src/main/java/com/examly/springapp/model/User.java =====
+package com.examly.springapp.model;
+
+import jakarta.persistence.*;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+
+import java.util.*;
+
+@Entity
+public class User {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @Column(unique = true, nullable = false)
+    @NotBlank(message = "Email is required")
+    @Email(message = "Email should be valid")
+    private String email;
+
+    @Column(nullable = false)
+    @NotBlank(message = "Password is required")
+    @Size(min = 6, message = "Password must be at least 6 characters")
+    private String password;
+
+    @Enumerated(EnumType.STRING)
+    private Role role;
+
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
+    private FoodTruckVendor foodTruckVendorProfile;
+
+    @Column(updatable = false)
+    private Date createdAt = new Date();
+
+    public User() {}
+
+    public User(String email, String password, Role role) {
+        this.email = email;
+        this.password = password;
+        this.role = role;
+    }
+
+    public Long getId() { return id; }
+    public void setId(Long id) { this.id = id; }
+
+    public String getEmail() { return email; }
+    public void setEmail(String email) { this.email = email; }
+
+    public String getPassword() { return password; }
+    public void setPassword(String password) { this.password = password; }
+
+    public Role getRole() { return role; }
+    public void setRole(Role role) { this.role = role; }
+
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return Collections.singletonList(new SimpleGrantedAuthority("ROLE_" + role.name()));
+    }
+}
+===== ./src/main/java/com/examly/springapp/model/Review.java =====
+package com.examly.springapp.model;
+
+import jakarta.persistence.*;
+import java.time.LocalDateTime;
+import java.util.UUID;
+
+@Entity
+public class Review {
+
+    @Id
+    @GeneratedValue
+    private UUID id;
+
+    @ManyToOne
+    @JoinColumn(name = "application_id", nullable = false)
+    private Application application;
+
+    @ManyToOne
+    @JoinColumn(name = "reviewer_id", nullable = false)
+    private User reviewer;
+
+    @Column(length = 1000)
+    private String comments;
+
+    private LocalDateTime reviewDate;
+
+    @Enumerated(EnumType.STRING)
+    private ReviewStatus status;
+
+    public Review() {}
+    public Review(Application app, User reviewer, String comments, LocalDateTime reviewDate, ReviewStatus status) {
+        this.application = app;
+        this.reviewer = reviewer;
+        this.comments = comments;
+        this.reviewDate = reviewDate;
+        this.status = status;
+    }
+
+    public UUID getId() { return id; }
+    public Application getApplication() { return application; }
+    public void setApplication(Application application) { this.application = application; }
+    public User getReviewer() { return reviewer; }
+    public void setReviewer(User reviewer) { this.reviewer = reviewer; }
+    public String getComments() { return comments; }
+    public void setComments(String comments) { this.comments = comments; }
+    public LocalDateTime getReviewDate() { return reviewDate; }
+    public void setReviewDate(LocalDateTime reviewDate) { this.reviewDate = reviewDate; }
+    public ReviewStatus getStatus() { return status; }
+    public void setStatus(ReviewStatus status) { this.status = status; }
+}
+===== ./src/main/java/com/examly/springapp/model/ApplicationStatus.java =====
+package com.examly.springapp.model;
+
+public enum ApplicationStatus {
+    DRAFT,
+    SUBMITTED,
+    INREVIEW,
+    REVIEW_APPROVED,
+    REVIEW_REJECTED,
+    INSPECTIONSCHEDULED,
+    INSPECTIONAPPROVED,
+    INSPECTIONREJECTED,
+    APPROVED,
+    REJECTED, LICENSE_ISSUED, RENEWAL_REQUESTED
+}
+===== ./src/main/java/com/examly/springapp/model/Application.java =====
+package com.examly.springapp.model;
+
+import jakarta.persistence.*;
+import java.time.LocalDateTime;
+import java.util.UUID;
+
+@Entity
+public class Application {
+
+    @Id
+    @GeneratedValue
+    private UUID id;
+
+    @ManyToOne
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
+
+    @Enumerated(EnumType.STRING)
+    private ApplicationStatus status;
+
+    private LocalDateTime submissionDate;
+
+    @ManyToOne
+    @JoinColumn(name = "assigned_reviewer_id")
+    private User assignedReviewer;
+
+    @ManyToOne
+    @JoinColumn(name = "assigned_inspector_id")
+    private User assignedInspector;
+
+    private String rejectionComments;
+    private String licenseNumber;
+    private LocalDateTime licenseExpiryDate;
+
+    public Application() {}
+
+    public Application(User user, ApplicationStatus status, LocalDateTime submissionDate) {
+        this.user = user;
+        this.status = status;
+        this.submissionDate = submissionDate;
+    }
+
+    public UUID getId() { return id; }
+    public User getUser() { return user; }
+    public void setUser(User user) { this.user = user; }
+    public ApplicationStatus getStatus() { return status; }
+    public void setStatus(ApplicationStatus status) { this.status = status; }
+    public LocalDateTime getSubmissionDate() { return submissionDate; }
+    public void setSubmissionDate(LocalDateTime submissionDate) { this.submissionDate = submissionDate; }
+    public User getAssignedReviewer() { return assignedReviewer; }
+    public void setAssignedReviewer(User assignedReviewer) { this.assignedReviewer = assignedReviewer; }
+    public User getAssignedInspector() { return assignedInspector; }
+    public void setAssignedInspector(User assignedInspector) { this.assignedInspector = assignedInspector; }
+    public String getRejectionComments() { return rejectionComments; }
+    public void setRejectionComments(String rejectionComments) { this.rejectionComments = rejectionComments; }
+    public String getLicenseNumber() { return licenseNumber; }
+    public void setLicenseNumber(String licenseNumber) { this.licenseNumber = licenseNumber; }
+    public LocalDateTime getLicenseExpiryDate() { return licenseExpiryDate; }
+    public void setLicenseExpiryDate(LocalDateTime licenseExpiryDate) { this.licenseExpiryDate = licenseExpiryDate; }
+}
+===== ./src/main/java/com/examly/springapp/model/ReviewStatus.java =====
+package com.examly.springapp.model;
+
+public enum ReviewStatus {
+    REVIEW_APPROVED,
+    REVIEW_REJECTED,
+}
+===== ./src/main/java/com/examly/springapp/model/InspectionResult.java =====
+package com.examly.springapp.model;
+
+public enum InspectionResult {
+    PASSED, FAILED, FOLLOW_UP_REQUIRED
+}
+
+===== ./src/main/java/com/examly/springapp/model/Inspection.java =====
+package com.examly.springapp.model;
+
+import jakarta.persistence.*;
+import java.time.LocalDateTime;
+import java.util.UUID;
+
+@Entity
+public class Inspection {
+
+    @Id
+    @GeneratedValue
+    private UUID id;
+
+    @ManyToOne
+    @JoinColumn(name = "application_id", nullable = false)
+    private Application application;
+
+    @ManyToOne
+    @JoinColumn(name = "inspector_id", nullable = false)
+    private User inspector;
+
+    @Column(length = 1000)
+    private String notes;
+
+    private LocalDateTime inspectionDate;
+
+    @Enumerated(EnumType.STRING)
+    private InspectionResult result;
+
+    public Inspection() {}
+
+    public UUID getId() { return id; }
+    public Application getApplication() { return application; }
+    public void setApplication(Application application) { this.application = application; }
+    public User getInspector() { return inspector; }
+    public void setInspector(User inspector) { this.inspector = inspector; }
+    public String getNotes() { return notes; }
+    public void setNotes(String notes) { this.notes = notes; }
+    public LocalDateTime getInspectionDate() { return inspectionDate; }
+    public void setInspectionDate(LocalDateTime inspectionDate) { this.inspectionDate = inspectionDate; }
+    public InspectionResult getResult() { return result; }
+    public void setResult(InspectionResult result) { this.result = result; }
+}
+
+
+===== ./src/main/java/com/examly/springapp/model/Document.java =====
+package com.examly.springapp.model;
+
+import jakarta.persistence.*;
+import java.time.LocalDateTime;
+import java.util.UUID;
+
+@Entity
+public class Document {
+
+    @Id
+    @GeneratedValue
+    private UUID id;
+
+    @ManyToOne
+    @JoinColumn(name = "application_id", nullable = false)
+    private Application application;
+
+    @ManyToOne
+    @JoinColumn(name = "uploaded_by_user_id", nullable = false)
+    private User uploadedBy;
+
+    private String filename;
+    private String fileType;
+    private long fileSize;
+
+    private LocalDateTime uploadTimestamp;
+    private boolean virusScanned;
+    private String storageType; // FileSystem, S3, etc.
+
+    public Document() {}
+
+    public UUID getId() { return id; }
+    public Application getApplication() { return application; }
+    public void setApplication(Application application) { this.application = application; }
+    public User getUploadedBy() { return uploadedBy; }
+    public void setUploadedBy(User uploadedBy) { this.uploadedBy = uploadedBy; }
+    public String getFilename() { return filename; }
+    public void setFilename(String filename) { this.filename = filename; }
+    public String getFileType() { return fileType; }
+    public void setFileType(String fileType) { this.fileType = fileType; }
+    public long getFileSize() { return fileSize; }
+    public void setFileSize(long fileSize) { this.fileSize = fileSize; }
+    public LocalDateTime getUploadTimestamp() { return uploadTimestamp; }
+    public void setUploadTimestamp(LocalDateTime uploadTimestamp) { this.uploadTimestamp = uploadTimestamp; }
+    public boolean isVirusScanned() { return virusScanned; }
+    public void setVirusScanned(boolean virusScanned) { this.virusScanned = virusScanned; }
+    public String getStorageType() { return storageType; }
+    public void setStorageType(String storageType) { this.storageType = storageType; }
+}
+===== ./src/main/java/com/examly/springapp/controller/FoodTruckVendorController.java =====
+package com.examly.springapp.controller;
+
+import com.examly.springapp.model.FoodTruckVendor;
+import com.examly.springapp.model.User;
+import com.examly.springapp.repository.FoodTruckVendorRepo;
+import com.examly.springapp.service.FoodTruckVendorService;
+import com.examly.springapp.service.UserService;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+
+@RestController
+public class FoodTruckVendorController {
+
+    private final FoodTruckVendorService service;
+    private final UserService userService;
+    private final FoodTruckVendorRepo foodTruckVendorRepo;
+
+    public FoodTruckVendorController(FoodTruckVendorService service, UserService userService, FoodTruckVendorRepo foodTruckVendorRepo) {
+        this.service = service;
+        this.userService = userService;
+        this.foodTruckVendorRepo = foodTruckVendorRepo;
+    }
+
+    @PostMapping("/api/vendors")
+    @PreAuthorize("hasRole('VENDOR')")
+    public ResponseEntity<FoodTruckVendor> addVendor(@AuthenticationPrincipal UserDetails userDetails,
+                                                     @RequestBody FoodTruckVendor vendor) {
+        User user = userService.findByEmail(userDetails.getUsername());
+        vendor.setUser(user);
+        return new ResponseEntity<>(service.addVendor(vendor), HttpStatus.CREATED);
+    }
+
+    @GetMapping("/api/vendors/all")
+@PreAuthorize("hasAnyRole('ADMIN','REVIEWER','INSPECTOR','SUPER_ADMIN')")
+public ResponseEntity<List<FoodTruckVendor>> getAllVendorsPlain() {
+    List<FoodTruckVendor> vendors = foodTruckVendorRepo.findAll();
+    return ResponseEntity.ok(vendors);
+}
+
+
+    @PutMapping("/api/vendors/{id}")
+    @PreAuthorize("hasRole('VENDOR')")
+    public ResponseEntity<FoodTruckVendor> updateVendor(@PathVariable Long id,
+                                                        @RequestBody FoodTruckVendor vendor,
+                                                        @AuthenticationPrincipal UserDetails userDetails) {
+        User user = userService.findByEmail(userDetails.getUsername());
+        vendor.setUser(user);
+        return ResponseEntity.ok(service.updateVendor(id, vendor));
+    }
+
+    @GetMapping("/api/vendors/me")
+    @PreAuthorize("hasRole('VENDOR')")
+    public ResponseEntity<FoodTruckVendor> getMyProfile(@AuthenticationPrincipal UserDetails userDetails) {
+        User user = userService.findByEmail(userDetails.getUsername());
+        FoodTruckVendor vendor = foodTruckVendorRepo.findByUserId(user.getId());
+        if (vendor != null) return ResponseEntity.ok(vendor);
+        return ResponseEntity.notFound().build();
+    }
+
+    @GetMapping("/api/vendors")
+    @PreAuthorize("hasAnyRole('ADMIN','REVIEWER','INSPECTOR','SUPER_ADMIN')")
+    public ResponseEntity<Page<FoodTruckVendor>> getAllVendors(@RequestParam(defaultValue = "0") int page,
+                                                               @RequestParam(defaultValue = "10") int size,
+                                                               @RequestParam(defaultValue = "name") String sortBy,
+                                                               @RequestParam(defaultValue = "asc") String direction) {
+        Sort.Direction sortDirection = direction.equalsIgnoreCase("desc") ? Sort.Direction.DESC : Sort.Direction.ASC;
+        Pageable pageable = PageRequest.of(page, size, Sort.by(sortDirection, sortBy));
+        return ResponseEntity.ok(service.getAllVendors(pageable));
+    }
+    //hasRole
+    @DeleteMapping("/api/vendors/{id}")
+    @PreAuthorize("hasAnyRole('ADMIN','SUPER_ADMIN')")
+    public ResponseEntity<Void> deleteVendor(@PathVariable Long id) {
+        service.deleteVendor(id);
+        return ResponseEntity.noContent().build();
+    }
+}
+===== ./src/main/java/com/examly/springapp/controller/UserController.java =====
+package com.examly.springapp.controller;
+
+import com.examly.springapp.model.User;
+import com.examly.springapp.security.AuthResponse;
+import com.examly.springapp.security.JwtUtil;
+import com.examly.springapp.service.UserService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.web.bind.annotation.*;
+
+@RestController
+@RequestMapping("/api/auth")
+public class UserController {
+
+    @Autowired
+    private JwtUtil jwtUtil;
+
+    @Autowired
+    private UserService userService;
+
+    @GetMapping("/me")
+    public ResponseEntity<User> getCurrentUser(@AuthenticationPrincipal UserDetails userDetails) {
+        User user = userService.findByEmail(userDetails.getUsername());
+        return ResponseEntity.ok(user);
+    }
+
+    @PostMapping("/refresh")
+    public ResponseEntity<AuthResponse> refreshToken(@AuthenticationPrincipal UserDetails userDetails) {
+        final String jwt = jwtUtil.generateToken(userDetails);
+        return ResponseEntity.ok(new AuthResponse(jwt));
+    }
+}===== ./src/main/java/com/examly/springapp/controller/ApplicationController.java =====
+package com.examly.springapp.controller;
+
+import com.examly.springapp.model.Application;
+import com.examly.springapp.model.ApplicationStatus;
+import com.examly.springapp.model.Role;
+import com.examly.springapp.model.User;
+import com.examly.springapp.service.ApplicationService;
+import com.examly.springapp.service.UserService;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+import java.util.UUID;
+
+@RestController
+@RequestMapping("/api/applications")
+public class ApplicationController {
+
+    private final ApplicationService applicationService;
+    private final UserService userService;
+
+    public ApplicationController(ApplicationService applicationService, UserService userService) {
+        this.applicationService = applicationService;
+        this.userService = userService;
+    }
+
+    @PostMapping("/submit")
+    @PreAuthorize("hasRole('VENDOR')")
+    public ResponseEntity<Application> submitApplication(@AuthenticationPrincipal UserDetails userDetails,
+                                                         @RequestBody(required = false) Application application) {
+        User user = userService.findByEmail(userDetails.getUsername());
+        Application saved = applicationService.submitApplication(user.getId(), application == null ? new Application() : application);
+        return ResponseEntity.ok(saved);
+    }
+
+    @GetMapping
+    public ResponseEntity<List<Application>> getApplications(@AuthenticationPrincipal UserDetails userDetails) {
+        User user = userService.findByEmail(userDetails.getUsername());
+        Role role = user.getRole();
+        Long userId = user.getId();
+        List<Application> applications = applicationService.getApplicationsByUserRole(role, userId);
+        return ResponseEntity.ok(applications);
+    }
+
+    @PutMapping("/{id}/status")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<Application> updateStatus(@PathVariable UUID id, @RequestParam ApplicationStatus status) {
+        Application updated = applicationService.updateApplicationStatus(id, status);
+        return ResponseEntity.ok(updated);
+    }
+
+    @PutMapping("/{id}/assignReviewer")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<Application> assignReviewer(@PathVariable UUID id, @RequestParam Long reviewerId) {
+        Application updated = applicationService.assignReviewer(id, reviewerId);
+        return ResponseEntity.ok(updated);
+    }
+
+    @PutMapping("/{id}/assignInspector")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<Application> assignInspector(@PathVariable UUID id, @RequestParam Long inspectorId) {
+        Application updated = applicationService.assignInspector(id, inspectorId);
+        return ResponseEntity.ok(updated);
+    }
+
+    @PutMapping("/{id}/issueLicense")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<Application> issueLicense(@PathVariable UUID id) {
+        Application updated = applicationService.issueLicense(id);
+        return ResponseEntity.ok(updated);
+    }
+
+    @PostMapping("/{id}/renew")
+    @PreAuthorize("hasRole('VENDOR')")
+    public ResponseEntity<Application> renewLicense(@PathVariable UUID id) {
+        Application renewed = applicationService.renewApplication(id);
+        return ResponseEntity.ok(renewed);
+    }
+}
+===== ./src/main/java/com/examly/springapp/controller/AuditLogController.java =====
+package com.examly.springapp.controller;
+
+import com.examly.springapp.model.AuditLog;
+import com.examly.springapp.service.AuditLogService;
+import com.examly.springapp.service.UserService;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+
+@RestController
+@RequestMapping("/api/admin/audit-logs")
+public class AuditLogController {
+
+    private final AuditLogService auditLogService;
+    private final UserService userService;
+
+    public AuditLogController(AuditLogService auditLogService, UserService userService) {
+        this.auditLogService = auditLogService;
+        this.userService = userService;
+    }
+
+    @GetMapping
+    public ResponseEntity<List<AuditLog>> getAllAuditLogs(@AuthenticationPrincipal UserDetails userDetails) {
+        List<AuditLog> logs = auditLogService.getAllLogs();
+        return ResponseEntity.ok(logs);
+    }
+}
+===== ./src/main/java/com/examly/springapp/controller/DocumentController.java =====
+package com.examly.springapp.controller;
+
+import com.examly.springapp.model.Document;
+import com.examly.springapp.service.DocumentService;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
+import java.util.List;
+import java.util.UUID;
+
+@RestController
+@RequestMapping("/api/documents")
+public class DocumentController {
+
+    private final DocumentService documentService;
+
+    public DocumentController(DocumentService documentService) {
+        this.documentService = documentService;
+    }
+
+    @PostMapping("/{applicationId}/upload")
+    public ResponseEntity<Document> uploadDocument(@PathVariable UUID applicationId,
+                                                   @RequestParam Long userId,
+                                                   @RequestParam("file") MultipartFile file) throws IOException {
+        Document uploaded = documentService.uploadDocument(applicationId, userId, file);
+        return ResponseEntity.ok(uploaded);
+    }
+
+    @GetMapping("/{applicationId}")
+    public ResponseEntity<List<Document>> getDocumentsByApplication(@PathVariable UUID applicationId) {
+        List<Document> documents = documentService.getDocumentsByApplication(applicationId);
+        return ResponseEntity.ok(documents);
+    }
+}
+===== ./src/main/java/com/examly/springapp/controller/InspectionController.java =====
+package com.examly.springapp.controller;
+
+import com.examly.springapp.model.Inspection;
+import com.examly.springapp.service.InspectionService;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+import java.util.UUID;
+
+@RestController
+@RequestMapping("/api/inspector/inspections")
+public class InspectionController {
+
+    private final InspectionService inspectionService;
+
+    public InspectionController(InspectionService inspectionService) {
+        this.inspectionService = inspectionService;
+    }
+
+    @PostMapping("/{applicationId}/add")
+    public ResponseEntity<Inspection> addInspection(@PathVariable UUID applicationId,
+                                                    @RequestParam Long inspectorId,
+                                                    @RequestBody Inspection inspection) {
+        Inspection createdInspection = inspectionService.addInspection(applicationId, inspectorId, inspection);
+        return ResponseEntity.ok(createdInspection);
+    }
+
+    @GetMapping("/{applicationId}")
+    public ResponseEntity<List<Inspection>> getInspectionsByApplication(@PathVariable UUID applicationId) {
+        List<Inspection> inspections = inspectionService.getInspectionsByApplication(applicationId);
+        return ResponseEntity.ok(inspections);
+    }
+}
+===== ./src/main/java/com/examly/springapp/controller/AdminUserController.java =====
+package com.examly.springapp.controller;
+
+import com.examly.springapp.model.User;
+import com.examly.springapp.repository.UserRepository;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+
+@RestController
+@RequestMapping("/api/admin")
+public class AdminUserController {
+
+    private final UserRepository userRepository;
+
+    public AdminUserController(UserRepository userRepository) {
+        this.userRepository = userRepository;
+    }
+
+    @GetMapping("/users")
+    public ResponseEntity<List<User>> getAllUsers() {
+        return ResponseEntity.ok(userRepository.findAll());
+    }
+}
+===== ./src/main/java/com/examly/springapp/controller/ReviewController.java =====
+package com.examly.springapp.controller;
+
+import com.examly.springapp.model.Review;
+import com.examly.springapp.service.ReviewService;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+import java.util.UUID;
+
+@RestController
+@RequestMapping("/api/reviewer/reviews")
+public class ReviewController {
+
+    private final ReviewService reviewService;
+
+    public ReviewController(ReviewService reviewService) {
+        this.reviewService = reviewService;
+    }
+
+    @PostMapping("/{applicationId}/add")
+    public ResponseEntity<Review> addReview(@PathVariable UUID applicationId,
+                                            @RequestParam Long reviewerId,
+                                            @RequestBody Review review) {
+        Review createdReview = reviewService.addReview(applicationId, reviewerId, review);
+        return ResponseEntity.ok(createdReview);
+    }
+
+    @GetMapping("/{applicationId}")
+    public ResponseEntity<List<Review>> getReviewsByApplication(@PathVariable UUID applicationId) {
+        List<Review> reviews = reviewService.getReviewsByApplication(applicationId);
+        return ResponseEntity.ok(reviews);
+    }
+}
+===== ./src/main/java/com/examly/springapp/controller/AuthController.java =====
+package com.examly.springapp.controller;
+
+import com.examly.springapp.model.Role;
+import com.examly.springapp.model.User;
+import com.examly.springapp.repository.UserRepository;
+import com.examly.springapp.security.JwtUtil;
+import com.examly.springapp.security.AuthRequest;
+import com.examly.springapp.security.AuthResponse;
+import com.examly.springapp.security.CustomUserDetailsService;
+import com.examly.springapp.service.UserService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.web.bind.annotation.*;
+
+@RestController
+@RequestMapping("/api/auth")
+@CrossOrigin(origins = "http://localhost:8081")
+public class AuthController {
+
+    @Autowired private AuthenticationManager authenticationManager;
+    @Autowired private JwtUtil jwtUtil;
+    @Autowired private CustomUserDetailsService userDetailsService;
+    @Autowired private PasswordEncoder passwordEncoder;
+    @Autowired private UserRepository userRepository;
+    @Autowired private UserService userService;
+
+    @PostMapping("/login")
+    public ResponseEntity<?> login(@RequestBody AuthRequest request) throws Exception {
+        authenticationManager.authenticate(
+            new UsernamePasswordAuthenticationToken(
+                request.getEmail(), request.getPassword()
+            )
+        );
+        final UserDetails userDetails = userDetailsService.loadUserByUsername(request.getEmail());
+        final String jwt = jwtUtil.generateToken(userDetails);
+        return ResponseEntity.ok(new AuthResponse(jwt));
+    }
+
+    @PostMapping("/register")
+    public ResponseEntity<?> register(@RequestBody User user) {
+        if (userRepository.existsByEmail(user.getEmail())) {
+            return ResponseEntity.badRequest().body("Email already in use");
+        }
+        if (user.getRole() == null) user.setRole(Role.VENDOR);
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
+        userRepository.save(user);
+        return ResponseEntity.ok("User registered successfully.");
+    }
+}
+===== ./src/main/java/com/examly/springapp/controller/SuperAdminController.java =====
+package com.examly.springapp.controller;
+
+import com.examly.springapp.model.User;
+import com.examly.springapp.repository.UserRepository;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+
+@RestController
+@RequestMapping("/api/superadmin")
+@PreAuthorize("hasRole('SUPER_ADMIN')")
+public class SuperAdminController {
+
+    private final UserRepository userRepository;
+
+    public SuperAdminController(UserRepository userRepository) {
+        this.userRepository = userRepository;
+    }
+
+    @GetMapping("/users")
+    public ResponseEntity<List<User>> getAllUsers() {
+        return ResponseEntity.ok(userRepository.findAll());
+    }
+
+    // Example additional feature: Change user role
+    @PutMapping("/users/{id}/role")
+    public ResponseEntity<User> changeUserRole(@PathVariable Long id, @RequestParam String role) {
+        User user = userRepository.findById(id).orElseThrow(() -> new RuntimeException("User not found"));
+        try {
+            user.setRole(Enum.valueOf(com.examly.springapp.model.Role.class, role.toUpperCase()));
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().build();
+        }
+        userRepository.save(user);
+        return ResponseEntity.ok(user);
+    }
+
+    // Admin-level deletion of users
+    @DeleteMapping("/users/{id}")
+    public ResponseEntity<Void> deleteUser(@PathVariable Long id) {
+        if (!userRepository.existsById(id)) {
+            return ResponseEntity.notFound().build();
+        }
+        userRepository.deleteById(id);
+        return ResponseEntity.noContent().build();
+    }
+}
+===== ./src/main/java/com/examly/springapp/security/JwtUtil.java =====
+package com.examly.springapp.security;
+
+import io.jsonwebtoken.*;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.stereotype.Component;
+
+import javax.crypto.spec.SecretKeySpec;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.function.Function;
+
+@Component
+public class JwtUtil {
+
+    @Value("${jwt.secret}")
+    private String SECRET_KEY;
+
+    @Value("${jwt.expiration}")
+    private long jwtExpirationMs;
+
+    private SecretKeySpec getSigningKey() {
+        return new SecretKeySpec(SECRET_KEY.getBytes(), SignatureAlgorithm.HS256.getJcaName());
+    }
+
+    public String extractUsername(String token) {
+        return extractClaim(token, Claims::getSubject);
+    }
+
+    public Date extractExpiration(String token) {
+        return extractClaim(token, Claims::getExpiration);
+    }
+
+    public <T> T extractClaim(String token, Function<Claims, T> claimsResolver) {
+        final Claims claims = extractAllClaims(token);
+        return claimsResolver.apply(claims);
+    }
+
+    private Claims extractAllClaims(String token) {
+        return Jwts.parserBuilder().setSigningKey(getSigningKey()).build().parseClaimsJws(token).getBody();
+    }
+
+    private Boolean isTokenExpired(String token) {
+        return extractExpiration(token).before(new Date());
+    }
+
+    public String generateToken(UserDetails userDetails) {
+        Map<String, Object> claims = new HashMap<>();
+        return createToken(claims, userDetails.getUsername());
+    }
+
+    private String createToken(Map<String, Object> claims, String subject) {
+        return Jwts.builder()
+                .setClaims(claims)
+                .setSubject(subject)
+                .setIssuedAt(new Date())
+                .setExpiration(new Date(System.currentTimeMillis() + jwtExpirationMs))
+                .signWith(getSigningKey(), SignatureAlgorithm.HS256)
+                .compact();
+    }
+
+    public Boolean validateToken(String token, UserDetails userDetails) {
+        final String username = extractUsername(token);
+        return (username.equals(userDetails.getUsername()) && !isTokenExpired(token));
+    }
+}
+===== ./src/main/java/com/examly/springapp/security/AuthRequest.java =====
+package com.examly.springapp.security;
+
+public class AuthRequest {
+    private String email;
+    private String password;
+
+    public String getEmail() { return email; }
+    public void setEmail(String email) { this.email = email; }
+
+    public String getPassword() { return password; }
+    public void setPassword(String password) { this.password = password; }
+    }
+  ===== ./src/main/java/com/examly/springapp/security/AuthResponse.java =====
+package com.examly.springapp.security;
+
+public class AuthResponse {
+    private final String jwt;
+
+    public AuthResponse(String jwt) { this.jwt = jwt; }
+    public String getJwt() { return jwt; }
+    }
+
+===== ./src/main/java/com/examly/springapp/security/JwtAuthenticationEntryPoint.java =====
+package com.examly.springapp.security;
+
+import java.io.IOException;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.web.AuthenticationEntryPoint;
+import org.springframework.stereotype.Component;
+
+@Component
+public class JwtAuthenticationEntryPoint implements AuthenticationEntryPoint {
+    @Override
+    public void commence(HttpServletRequest request,
+                         HttpServletResponse response,
+                         AuthenticationException authException)
+            throws IOException, ServletException {
+        response.sendError(HttpServletResponse.SC_UNAUTHORIZED,
+                "Unauthorized: " + authException.getMessage());
+    }
+}
+===== ./src/main/java/com/examly/springapp/security/SecurityConfig.java =====
+package com.examly.springapp.security;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
+import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+
+import java.util.Arrays;
+import java.util.List;
+
+@Configuration
+@EnableWebSecurity
+@EnableMethodSecurity
+public class SecurityConfig {
+
+    @Autowired private JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
+    @Autowired private JwtRequestFilter jwtRequestFilter;
+    @Autowired private CustomUserDetailsService customUserDetailsService;
+
+    private static final String[] PUBLIC_URLS = {
+        "/api/auth/login",
+        "/api/auth/register",
+        "/api/auth/verify",
+        "/v3/api-docs/**",
+        "/swagger-ui/**",
+        "/swagger-resources/**"
+    };
+
+    @Bean
+    public PasswordEncoder passwordEncoder() { return new BCryptPasswordEncoder(); }
+
+    @Bean
+    public AuthenticationManager authenticationManager(HttpSecurity http) throws Exception {
+        return http.getSharedObject(AuthenticationManagerBuilder.class)
+                   .userDetailsService(customUserDetailsService)
+                   .passwordEncoder(passwordEncoder())
+                   .and()
+                   .build();
+    }
+
+    @Bean
+    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+        http.csrf(csrf -> csrf.disable())
+            .cors(cors -> cors.configurationSource(corsConfigurationSource()))
+            .sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+            .exceptionHandling(ex -> ex.authenticationEntryPoint(jwtAuthenticationEntryPoint))
+            .authorizeHttpRequests(auth -> auth
+                .requestMatchers(PUBLIC_URLS).permitAll()
+                .requestMatchers("/api/admin/**").hasAnyRole("ADMIN","SUPER_ADMIN")
+                .requestMatchers("/api/vendors/**").hasAnyRole("VENDOR","ADMIN","REVIEWER","INSPECTOR","SUPER_ADMIN")
+                .requestMatchers("/api/reviewer/**").hasAnyRole("REVIEWER","ADMIN","SUPER_ADMIN")
+                .requestMatchers("/api/inspector/**").hasAnyRole("INSPECTOR","ADMIN","SUPER_ADMIN")
+                .anyRequest().authenticated()
+            )
+            .addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
+
+        return http.build();
+    }
+
+    @Bean
+    public UrlBasedCorsConfigurationSource corsConfigurationSource() {
+        CorsConfiguration config = new CorsConfiguration();
+        config.setAllowCredentials(true);
+        config.setAllowedOrigins(List.of("http://localhost:8081"));
+        config.setAllowedHeaders(Arrays.asList("Origin","Content-Type","Accept","Authorization"));
+        config.setAllowedMethods(Arrays.asList("GET","POST","PUT","DELETE","OPTIONS"));
+        config.setMaxAge(3600L);
+
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", config);
+        return source;
+    }
+}
+===== ./src/main/java/com/examly/springapp/security/JwtRequestFilter.java =====
+package com.examly.springapp.security;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
+import org.springframework.stereotype.Component;
+import org.springframework.web.filter.OncePerRequestFilter;
+
+import jakarta.servlet.FilterChain;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import java.io.IOException;
+
+@Component
+public class JwtRequestFilter extends OncePerRequestFilter {
+
+    @Autowired
+    private CustomUserDetailsService userDetailsService;
+
+    @Autowired
+    private JwtUtil jwtUtil;
+
+    @Override
+    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain)
+            throws ServletException, IOException {
+
+        final String authorizationHeader = request.getHeader("Authorization");
+        String username = null, jwt = null;
+
+        if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
+            jwt = authorizationHeader.substring(7);
+            username = jwtUtil.extractUsername(jwt);
+        }
+
+        if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+            UserDetails userDetails = this.userDetailsService.loadUserByUsername(username);
+
+            if (jwtUtil.validateToken(jwt, userDetails)) {
+                UsernamePasswordAuthenticationToken auth =
+                        new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+                auth.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+                SecurityContextHolder.getContext().setAuthentication(auth);
+            }
+        }
+        chain.doFilter(request, response);
+    }
+}
+===== ./src/main/java/com/examly/springapp/security/CustomUserDetailsService.java =====
+package com.examly.springapp.security;
+
+import com.examly.springapp.model.User;
+import com.examly.springapp.repository.UserRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.stereotype.Service;
+
+@Service
+public class CustomUserDetailsService implements UserDetailsService {
+
+    @Autowired
+    private UserRepository userRepository;
+
+    @Override
+    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found with email: " + email));
+
+        return new org.springframework.security.core.userdetails.User(
+                user.getEmail(),
+                user.getPassword(),
+                true, // always enabled since verification is removed
+                true,
+                true,
+                true,
+                user.getAuthorities()
+        );
+    }
+}
+===== ./src/main/java/com/examly/springapp/repository/ReviewRepository.java =====
+package com.examly.springapp.repository;
+
+import com.examly.springapp.model.Review;
+import org.springframework.data.jpa.repository.JpaRepository;
+import java.util.List;
+import java.util.UUID;
+
+public interface ReviewRepository extends JpaRepository<Review, UUID> {
+    List<Review> findByApplicationId(UUID applicationId);
+}
+===== ./src/main/java/com/examly/springapp/repository/FoodTruckVendorRepo.java =====
+package com.examly.springapp.repository;
+
+import com.examly.springapp.model.FoodTruckVendor;
+import org.springframework.data.jpa.repository.JpaRepository;
+
+public interface FoodTruckVendorRepo extends JpaRepository<FoodTruckVendor, Long> {
+    FoodTruckVendor findByUserId(Long userId);
+}
+===== ./src/main/java/com/examly/springapp/repository/UserRepository.java =====
+package com.examly.springapp.repository;
+
+import com.examly.springapp.model.User;
+import org.springframework.data.jpa.repository.JpaRepository;
+import java.util.Optional;
+
+public interface UserRepository extends JpaRepository<User, Long> {
+    Optional<User> findByEmail(String email);
+    boolean existsByEmail(String email);
+}
+===== ./src/main/java/com/examly/springapp/repository/DocumentRepository.java =====
+package com.examly.springapp.repository;
+
+import com.examly.springapp.model.Document;
+import org.springframework.data.jpa.repository.JpaRepository;
+import java.util.List;
+import java.util.UUID;
+
+public interface DocumentRepository extends JpaRepository<Document, UUID> {
+    List<Document> findByApplicationId(UUID applicationId);
+}
+===== ./src/main/java/com/examly/springapp/repository/InspectionRepository.java =====
+package com.examly.springapp.repository;
+
+import com.examly.springapp.model.Inspection;
+import org.springframework.data.jpa.repository.JpaRepository;
+import java.util.List;
+import java.util.UUID;
+
+public interface InspectionRepository extends JpaRepository<Inspection, UUID> {
+    List<Inspection> findByApplicationId(UUID applicationId);
+}
+===== ./src/main/java/com/examly/springapp/repository/ApplicationRepository.java =====
+package com.examly.springapp.repository;
+
+import com.examly.springapp.model.Application;
+import org.springframework.data.jpa.repository.JpaRepository;
+import java.util.List;
+import java.util.UUID;
+
+public interface ApplicationRepository extends JpaRepository<Application, UUID> {
+    List<Application> findByUserId(Long userId);
+    List<Application> findByAssignedReviewerId(Long reviewerId);
+    List<Application> findByAssignedInspectorId(Long inspectorId);
+}
+===== ./src/main/java/com/examly/springapp/repository/AuditLogRepository.java =====
+package com.examly.springapp.repository;
+
+import com.examly.springapp.model.AuditLog;
+import org.springframework.data.jpa.repository.JpaRepository;
+import java.util.UUID;
+
+public interface AuditLogRepository extends JpaRepository<AuditLog, UUID> {}
+===== ./src/main/java/com/examly/springapp/SpringappApplication.java =====
+package com.examly.springapp;
+
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+
+@SpringBootApplication
+public class SpringappApplication {
+
+	public static void main(String[] args) {
+		SpringApplication.run(SpringappApplication.class, args);
+	}
+
+}
+===== ./src/main/java/com/examly/springapp/exception/GlobalExceptionHandler.java =====
+package com.examly.springapp.exception;
+
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.web.bind.annotation.ControllerAdvice;
+import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.context.request.WebRequest;
+
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
+
+@ControllerAdvice
+public class GlobalExceptionHandler {
+
+    @ExceptionHandler(ResourceNotFoundException.class)
+    public ResponseEntity<ErrorDetails> handleResourceNotFound(ResourceNotFoundException ex, WebRequest request) {
+        ErrorDetails error = new ErrorDetails(new Date(), ex.getMessage(), request.getDescription(false));
+        return new ResponseEntity<>(error, HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(BadCredentialsException.class)
+    public ResponseEntity<ErrorDetails> handleBadCredentials(BadCredentialsException ex, WebRequest request) {
+        return new ResponseEntity<>(new ErrorDetails(new Date(),
+                "Invalid username or password", request.getDescription(false)), HttpStatus.UNAUTHORIZED);
+    }
+
+    @ExceptionHandler(InvalidOperatingRegionException.class)
+    public ResponseEntity<String> handleInvalidRegion(InvalidOperatingRegionException ex) {
+        return ResponseEntity.badRequest().body(ex.getMessage());
+    }
+
+    @ExceptionHandler(RuntimeException.class)
+    public ResponseEntity<Map<String, String>> handleRuntime(RuntimeException ex) {
+        Map<String, String> response = new HashMap<>();
+        response.put("error", ex.getMessage());
+        response.put("timestamp", new Date().toString());
+        return ResponseEntity.badRequest().body(response);
+    }
+
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<ErrorDetails> handleGlobal(Exception ex, WebRequest request) {
+        ErrorDetails error = new ErrorDetails(new Date(), ex.getMessage(), request.getDescription(false));
+        return new ResponseEntity<>(error, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    public static class ErrorDetails {
+        private Date timestamp;
+        private String message;
+        private String details;
+
+        public ErrorDetails(Date timestamp, String message, String details) {
+            this.timestamp = timestamp;
+            this.message = message;
+            this.details = details;
+        }
+
+        public Date getTimestamp() { return timestamp; }
+        public String getMessage() { return message; }
+        public String getDetails() { return details; }
+    }
+}
+===== ./src/main/java/com/examly/springapp/exception/InvalidOperatingRegionException.java =====
+package com.examly.springapp.exception;
+
+public class InvalidOperatingRegionException extends RuntimeException {
+    public InvalidOperatingRegionException(String message) {
+        super(message);
+    }
+}
+===== ./src/main/java/com/examly/springapp/exception/ResourceNotFoundException.java =====
+package com.examly.springapp.exception;
+
+public class ResourceNotFoundException extends RuntimeException {
+    public ResourceNotFoundException(String message) {
+        super(message);
+    }
+}
+===== ./src/main/java/com/examly/springapp/service/DocumentService.java =====
+package com.examly.springapp.service;
+
+import com.examly.springapp.exception.ResourceNotFoundException;
+import com.examly.springapp.model.Application;
+import com.examly.springapp.model.Document;
+import com.examly.springapp.model.User;
+import com.examly.springapp.repository.ApplicationRepository;
+import com.examly.springapp.repository.DocumentRepository;
+import com.examly.springapp.repository.UserRepository;
+import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.File;
+import java.io.IOException;
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.UUID;
+
+@Service
+public class DocumentService {
+
+    private final DocumentRepository documentRepository;
+    private final ApplicationRepository applicationRepository;
+    private final UserRepository userRepository;
+
+    public DocumentService(DocumentRepository documentRepository,
+                           ApplicationRepository applicationRepository,
+                           UserRepository userRepository) {
+        this.documentRepository = documentRepository;
+        this.applicationRepository = applicationRepository;
+        this.userRepository = userRepository;
+    }
+
+    public Document uploadDocument(UUID applicationId, Long userId, MultipartFile file) throws IOException {
+        if (file.isEmpty()) throw new RuntimeException("File cannot be empty");
+
+        String fileType = file.getContentType();
+        if (!(fileType.equals("application/pdf") || fileType.startsWith("image/"))) {
+            throw new RuntimeException("Only PDF or Image files allowed");
+        }
+        if (file.getSize() > 5_000_000) {
+            throw new RuntimeException("File too large, max 5MB");
+        }
+
+        Application application = applicationRepository.findById(applicationId)
+                .orElseThrow(() -> new ResourceNotFoundException("Application not found"));
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+
+        File storageDir = new File("uploads");
+        if (!storageDir.exists()) storageDir.mkdirs();
+        File dest = new File(storageDir, file.getOriginalFilename());
+        file.transferTo(dest);
+
+        Document doc = new Document();
+        doc.setApplication(application);
+        doc.setUploadedBy(user);
+        doc.setFilename(file.getOriginalFilename());
+        doc.setFileType(fileType);
+        doc.setFileSize(file.getSize());
+        doc.setUploadTimestamp(LocalDateTime.now());
+        doc.setVirusScanned(true); // stub
+        doc.setStorageType("FileSystem");
+
+        return documentRepository.save(doc);
+    }
+
+    public List<Document> getDocumentsByApplication(UUID applicationId) {
+        return documentRepository.findByApplicationId(applicationId);
+    }
+}
+===== ./src/main/java/com/examly/springapp/service/UserService.java =====
+package com.examly.springapp.service;
+
+import com.examly.springapp.exception.ResourceNotFoundException;
+import com.examly.springapp.model.Role;
+import com.examly.springapp.model.User;
+import com.examly.springapp.repository.UserRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
+
+@Service
+public class UserService {
+
+    @Autowired
+    private UserRepository userRepository;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
+    public User findByEmail(String email) {
+        return userRepository.findByEmail(email)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+    }
+
+    public User findById(Long id) {
+        return userRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+    }
+
+    public User registerUser(User user) {
+        if (userRepository.existsByEmail(user.getEmail())) {
+            throw new RuntimeException("Email already in use");
+        }
+        if (user.getRole() == null) {
+            user.setRole(Role.VENDOR);
+        }
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
+        return userRepository.save(user);
+    }
+}
+===== ./src/main/java/com/examly/springapp/service/ApplicationService.java =====
+package com.examly.springapp.service;
+
+import com.examly.springapp.exception.ResourceNotFoundException;
+import com.examly.springapp.model.*;
+import com.examly.springapp.repository.ApplicationRepository;
+import com.examly.springapp.repository.FoodTruckVendorRepo;
+import com.examly.springapp.repository.UserRepository;
+import org.springframework.stereotype.Service;
+
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.UUID;
+
+@Service
+public class ApplicationService {
+
+    private final ApplicationRepository applicationRepository;
+    private final UserRepository userRepository;
+    private final FoodTruckVendorRepo vendorRepo;
+   
+
+    public ApplicationService(ApplicationRepository applicationRepository, UserRepository userRepository,  FoodTruckVendorRepo vendorRepo) {
+        this.applicationRepository = applicationRepository;
+        this.userRepository = userRepository;
+        this.vendorRepo = vendorRepo;
+    }
+
+    public Application submitApplication(Long userId, Application application) {
+        User user = userRepository.findById(userId).orElseThrow(() -> new ResourceNotFoundException("User not found"));
+
+        if (vendorRepo.findByUserId(userId) == null) {
+            throw new RuntimeException("Vendor must complete FoodTruckVendor profile before submitting application.");
+        }
+        application.setUser(user);
+        application.setStatus(ApplicationStatus.SUBMITTED);
+        application.setSubmissionDate(LocalDateTime.now());
+        Application saved = applicationRepository.save(application);
+        return saved;
+    }
+
+  public Application updateApplicationStatus(UUID applicationId, ApplicationStatus status) {
+    Application application = applicationRepository.findById(applicationId).orElseThrow(() -> new ResourceNotFoundException("Application not found"));
+
+    // Only admin can set these final statuses and only in correct states
+    if (status == ApplicationStatus.APPROVED) {
+        if (application.getStatus() == ApplicationStatus.INSPECTIONAPPROVED) {
+            application.setStatus(ApplicationStatus.APPROVED);
+        } else {
+            throw new RuntimeException("Cannot approve; review/inspection not passed");
+        }
+    } 
+    else if (status == ApplicationStatus.REJECTED) {
+        if (application.getStatus() == ApplicationStatus.REVIEW_REJECTED
+         || application.getStatus() == ApplicationStatus.INSPECTIONREJECTED) {
+            application.setStatus(ApplicationStatus.REJECTED);
+        } else {
+            throw new RuntimeException("Cannot reject; must be rejected in review or inspection");
+        }
+    } else {
+        throw new RuntimeException("Invalid status transition by admin");
+    }
+
+    Application saved = applicationRepository.save(application);
+    
+    return saved;
+}
+
+
+    
+
+    public List<Application> getApplicationsByUserRole(Role role, Long userId) {
+        if (role == Role.VENDOR) {
+            return applicationRepository.findByUserId(userId);
+        } else if (role == Role.REVIEWER) {
+            return applicationRepository.findByAssignedReviewerId(userId);
+        } else if (role == Role.INSPECTOR) {
+            return applicationRepository.findByAssignedInspectorId(userId);
+        } else if (role == Role.ADMIN) {
+            return applicationRepository.findAll();
+        }
+        throw new RuntimeException("Role not supported");
+    }
+
+    public Application assignReviewer(UUID applicationId, Long reviewerId) {
+    Application application = applicationRepository.findById(applicationId)
+        .orElseThrow(() -> new ResourceNotFoundException("Application not found"));
+    User reviewer = userRepository.findById(reviewerId)
+        .orElseThrow(() -> new ResourceNotFoundException("Reviewer not found"));
+    if (reviewer.getRole() != Role.REVIEWER) {
+        throw new RuntimeException("User is not a reviewer");
+    }
+    application.setAssignedReviewer(reviewer);
+    application.setStatus(ApplicationStatus.INREVIEW);
+    Application saved = applicationRepository.save(application);
+    
+    return saved;
+}
+
+
+   public Application assignInspector(UUID applicationId, Long inspectorId) {
+    Application application = applicationRepository.findById(applicationId)
+        .orElseThrow(() -> new ResourceNotFoundException("Application not found"));
+    if (application.getStatus() != ApplicationStatus.REVIEW_APPROVED) {
+        throw new RuntimeException("Cannot assign inspector unless review is approved");
+    }
+    User inspector = userRepository.findById(inspectorId)
+        .orElseThrow(() -> new ResourceNotFoundException("Inspector not found"));
+    if (inspector.getRole() != Role.INSPECTOR) {
+        throw new RuntimeException("User is not an inspector");
+    }
+    application.setAssignedInspector(inspector);
+    application.setStatus(ApplicationStatus.INSPECTIONSCHEDULED);
+    Application saved = applicationRepository.save(application);
+   
+    return saved;
+}
+
+
+    public Application issueLicense(UUID applicationId) {
+        Application application = applicationRepository.findById(applicationId)
+                .orElseThrow(() -> new ResourceNotFoundException("Application not found"));
+
+        if (application.getStatus() != ApplicationStatus.APPROVED) {
+            throw new RuntimeException("License can only be issued for approved applications");
+        }
+
+        application.setLicenseNumber("LIC-" + UUID.randomUUID().toString().substring(0, 8));
+        application.setLicenseExpiryDate(LocalDateTime.now().plusYears(1));
+        application.setStatus(ApplicationStatus.LICENSE_ISSUED);
+
+     
+
+        return applicationRepository.save(application);
+    }
+
+    public Application renewApplication(UUID applicationId) {
+        Application oldApp = applicationRepository.findById(applicationId)
+                .orElseThrow(() -> new ResourceNotFoundException("Application not found"));
+
+        if (oldApp.getStatus() != ApplicationStatus.LICENSE_ISSUED) {
+            throw new RuntimeException("Only issued licenses can be renewed");
+        }
+
+        Application renewal = new Application();
+        renewal.setUser(oldApp.getUser());
+        renewal.setStatus(ApplicationStatus.RENEWAL_REQUESTED);
+        renewal.setSubmissionDate(LocalDateTime.now());
+
+        return applicationRepository.save(renewal);
+    }
+}
+===== ./src/main/java/com/examly/springapp/service/InspectionService.java =====
+package com.examly.springapp.service;
+
+import com.examly.springapp.exception.ResourceNotFoundException;
+import com.examly.springapp.model.*;
+import com.examly.springapp.repository.ApplicationRepository;
+import com.examly.springapp.repository.InspectionRepository;
+import com.examly.springapp.repository.UserRepository;
+import org.springframework.stereotype.Service;
+
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.UUID;
+
+@Service
+public class InspectionService {
+
+    private final InspectionRepository inspectionRepository;
+    private final ApplicationRepository applicationRepository;
+    private final UserRepository userRepository;
+   
+
+    public InspectionService(InspectionRepository inspectionRepository, ApplicationRepository applicationRepository,
+                             UserRepository userRepository) {
+        this.inspectionRepository = inspectionRepository;
+        this.applicationRepository = applicationRepository;
+        this.userRepository = userRepository;
+    }
+
+    public Inspection addInspection(UUID applicationId, Long inspectorId, Inspection inspection) {
+    Application app = applicationRepository.findById(applicationId)
+        .orElseThrow(() -> new ResourceNotFoundException("Application not found"));
+    if (app.getStatus() != ApplicationStatus.INSPECTIONSCHEDULED) {
+        throw new RuntimeException("Inspection can only be performed when scheduled");
+    }
+    User inspector = userRepository.findById(inspectorId)
+        .orElseThrow(() -> new ResourceNotFoundException("Inspector not found"));
+    if (inspector.getRole() != Role.INSPECTOR) {
+        throw new RuntimeException("User is not an inspector");
+    }
+    inspection.setApplication(app);
+    inspection.setInspector(inspector);
+    inspection.setInspectionDate(LocalDateTime.now());
+    // Set application status based on inspection result
+    switch(inspection.getResult()) {
+        case PASSED:
+            app.setStatus(ApplicationStatus.INSPECTIONAPPROVED);
+            break;
+        case FAILED:
+            app.setStatus(ApplicationStatus.INSPECTIONREJECTED);
+            break;
+        default:
+            throw new RuntimeException("Invalid inspection result for application status flow");
+    }
+    applicationRepository.save(app);
+    return inspectionRepository.save(inspection);
+}
+
+
+    public List<Inspection> getInspectionsByApplication(UUID applicationId) {
+        return inspectionRepository.findByApplicationId(applicationId);
+    }
+}
+===== ./src/main/java/com/examly/springapp/service/ReviewService.java =====
+package com.examly.springapp.service;
+
+import com.examly.springapp.exception.ResourceNotFoundException;
+import com.examly.springapp.model.*;
+import com.examly.springapp.repository.ApplicationRepository;
+import com.examly.springapp.repository.ReviewRepository;
+import com.examly.springapp.repository.UserRepository;
+import org.springframework.stereotype.Service;
+
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.UUID;
+
+@Service
+public class ReviewService {
+
+    private final ReviewRepository reviewRepository;
+    private final ApplicationRepository applicationRepository;
+    private final UserRepository userRepository;
+   
+
+    public ReviewService(ReviewRepository reviewRepository, ApplicationRepository applicationRepository,
+                         UserRepository userRepository) {
+        this.reviewRepository = reviewRepository;
+        this.applicationRepository = applicationRepository;
+        this.userRepository = userRepository;
+      
+    }
+
+    public Review addReview(UUID applicationId, Long reviewerId, Review review) {
+        Application app = applicationRepository.findById(applicationId)
+                .orElseThrow(() -> new ResourceNotFoundException("Application not found"));
+        User reviewer = userRepository.findById(reviewerId)
+                .orElseThrow(() -> new ResourceNotFoundException("Reviewer not found"));
+
+        if (reviewer.getRole() != Role.REVIEWER) {
+            throw new IllegalArgumentException("User is not a reviewer");
+        }
+
+        review.setApplication(app);
+        review.setReviewer(reviewer);
+        review.setReviewDate(LocalDateTime.now());
+
+        if (review.getStatus() == ReviewStatus.REVIEW_REJECTED && (review.getComments() == null || review.getComments().isBlank())) {
+            throw new RuntimeException("Comments required when rejecting an application");
+        }
+
+       // Inside addReview method for ReviewService.java
+switch(review.getStatus()) {
+    case REVIEW_APPROVED:
+        app.setStatus(ApplicationStatus.REVIEW_APPROVED);
+        break;
+    case REVIEW_REJECTED:
+        app.setStatus(ApplicationStatus.REVIEW_REJECTED);
+        app.setRejectionComments(review.getComments());
+        break;
+}
+applicationRepository.save(app);
+
+
+
+        return reviewRepository.save(review);
+    }
+
+    public List<Review> getReviewsByApplication(UUID applicationId) {
+        return reviewRepository.findByApplicationId(applicationId);
+    }
+}
+===== ./src/main/java/com/examly/springapp/service/AuditLogService.java =====
+package com.examly.springapp.service;
+
+import com.examly.springapp.model.AuditLog;
+import com.examly.springapp.model.User;
+import com.examly.springapp.repository.AuditLogRepository;
+import org.springframework.stereotype.Service;
+
+import java.time.LocalDateTime;
+import java.util.List;
+
+@Service
+public class AuditLogService {
+
+    private final AuditLogRepository auditLogRepository;
+
+    public AuditLogService(AuditLogRepository repo) {
+        this.auditLogRepository = repo;
+    }
+
+    public void logAction(User user, String ipAddress, String module, String operation, String details) {
+        AuditLog log = new AuditLog(user, ipAddress, LocalDateTime.now(), module, operation, details);
+        auditLogRepository.save(log);
+    }
+
+    public List<AuditLog> getAllLogs() {
+        return auditLogRepository.findAll();
+    }
+}
+===== ./src/main/java/com/examly/springapp/service/FoodTruckVendorService.java =====
+package com.examly.springapp.service;
+
+import com.examly.springapp.model.FoodTruckVendor;
+import com.examly.springapp.exception.InvalidOperatingRegionException;
+import com.examly.springapp.repository.FoodTruckVendorRepo;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.stereotype.Service;
+import java.util.Arrays;
+import java.util.List;
+
+@Service
+public class FoodTruckVendorService {
+
+    private final FoodTruckVendorRepo repo;
+    private final List<String> allowedRegions = Arrays.asList("Chennai", "Bangalore");
+
+    public FoodTruckVendorService(FoodTruckVendorRepo repo) {
+        this.repo = repo;
+    }
+
+    public FoodTruckVendor addVendor(FoodTruckVendor vendor) {
+        validateOperatingRegion(vendor.getOperatingRegion());
+        return repo.save(vendor);
+    }
+
+    public Page<FoodTruckVendor> getAllVendors(Pageable pageable) {
+        return repo.findAll(pageable);
+    }
+
+    public void deleteVendor(Long id) {
+        if (!repo.existsById(id)) {
+            throw new RuntimeException("Vendor not found with id: " + id);
+        }
+        repo.deleteById(id);
+    }
+
+    public FoodTruckVendor updateVendor(Long id, FoodTruckVendor vendor) {
+        FoodTruckVendor existing = repo.findById(id)
+                .orElseThrow(() -> new RuntimeException("Vendor not found"));
+        validateOperatingRegion(vendor.getOperatingRegion());
+        existing.setName(vendor.getName());
+        existing.setCuisineSpecialties(vendor.getCuisineSpecialties());
+        existing.setOperatingRegion(vendor.getOperatingRegion());
+        existing.setMenuHighlights(vendor.getMenuHighlights());
+        existing.setPhoneNumber(vendor.getPhoneNumber());
+        return repo.save(existing);
+    }
+
+    private void validateOperatingRegion(String region) {
+        if (!allowedRegions.contains(region)) {
+            throw new InvalidOperatingRegionException(
+                    "Invalid operating region. Must be either Chennai or Bangalore.");
+        }
+    }
+}
+===== ./.mvn/wrapper/maven-wrapper.properties =====
+# Licensed to the Apache Software Foundation (ASF) under one
+# or more contributor license agreements.  See the NOTICE file
+# distributed with this work for additional information
+# regarding copyright ownership.  The ASF licenses this file
+# to you under the Apache License, Version 2.0 (the
+# "License"); you may not use this file except in compliance
+# with the License.  You may obtain a copy of the License at
+#
+#   https://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing,
+# software distributed under the License is distributed on an
+# "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+# KIND, either express or implied.  See the License for the
+# specific language governing permissions and limitations
+# under the License.
+distributionUrl=https://repo.maven.apache.org/maven2/org/apache/maven/apache-maven/3.8.7/apache-maven-3.8.7-bin.zip
+wrapperUrl=https://repo.maven.apache.org/maven2/org/apache/maven/wrapper/maven-wrapper/3.1.1/maven-wrapper-3.1.1.jar
+===== ./pom.xml =====
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+<modelVersion>4.0.0</modelVersion>
+<parent>
+<groupId>org.springframework.boot</groupId>
+<artifactId>spring-boot-starter-parent</artifactId>
+<version>3.0.1</version>
+<relativePath />
+</parent>
+<groupId>com.examly.springapp</groupId>
+<artifactId>SpringBootEmp</artifactId>
+<version>0.0.1-SNAPSHOT</version>
+<name>SpringBootEmp</name>
+<description>Demo project for Spring Boot</description>
+
+<properties>
+<java.version>17</java.version>
+</properties>
+
+<dependencies>
+<!-- JWT -->
+<dependency>
+<groupId>io.jsonwebtoken</groupId>
+<artifactId>jjwt-api</artifactId>
+<version>0.11.5</version>
+</dependency>
+<dependency>
+<groupId>io.jsonwebtoken</groupId>
+<artifactId>jjwt-impl</artifactId>
+<version>0.11.5</version>
+<scope>runtime</scope>
+</dependency>
+<dependency>
+<groupId>io.jsonwebtoken</groupId>
+<artifactId>jjwt-jackson</artifactId>
+<version>0.11.5</version>
+<scope>runtime</scope>
+</dependency>
+
+<!-- Spring Boot -->
+<dependency>
+<groupId>org.springframework.boot</groupId>
+<artifactId>spring-boot-starter-mail</artifactId>
+</dependency>
+<dependency>
+<groupId>org.eclipse.angus</groupId>
+<artifactId>jakarta.mail</artifactId>
+<version>2.0.3</version>
+</dependency>
+<dependency>
+<groupId>org.springframework.boot</groupId>
+<artifactId>spring-boot-starter-security</artifactId>
+</dependency>
+<dependency>
+<groupId>org.springframework.boot</groupId>
+<artifactId>spring-boot-starter-data-jpa</artifactId>
+</dependency>
+<dependency>
+<groupId>org.springframework.boot</groupId>
+<artifactId>spring-boot-starter</artifactId>
+</dependency>
+<dependency>
+<groupId>org.springdoc</groupId>
+<artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
+<version>2.2.0</version>
+</dependency>
+<dependency>
+<groupId>org.springframework.boot</groupId>
+<artifactId>spring-boot-starter-web</artifactId>
+</dependency>
+<dependency>
+<groupId>org.springframework.boot</groupId>
+<artifactId>spring-boot-devtools</artifactId>
+</dependency>
+
+<!-- MySQL -->
+<dependency>
+<groupId>com.mysql</groupId>
+<artifactId>mysql-connector-j</artifactId>
+<version>8.0.32</version>
+</dependency>
+
+<!-- Lombok -->
+<dependency>
+<groupId>org.projectlombok</groupId>
+<artifactId>lombok</artifactId>
+<optional>true</optional>
+</dependency>
+
+<!-- Testing -->
+<dependency>
+<groupId>org.springframework.boot</groupId>
+<artifactId>spring-boot-starter-test</artifactId>
+<scope>test</scope>
+</dependency>
+<dependency>
+<groupId>org.junit.vintage</groupId>
+<artifactId>junit-vintage-engine</artifactId>
+<scope>test</scope>
+<exclusions>
+<exclusion>
+	<groupId>org.hamcrest</groupId>
+		<artifactId>hamcrest-core</artifactId>
+		</exclusion>
+		</exclusions>
+		</dependency>
+		<dependency>
+		<groupId>org.mockito</groupId>
+		<artifactId>mockito-core</artifactId>
+		</dependency>
+		<dependency>
+		<groupId>org.junit.jupiter</groupId>
+		<artifactId>junit-jupiter-engine</artifactId>
+		<scope>test</scope>
+		</dependency>
+		<dependency>
+		<groupId>junit</groupId>
+		<artifactId>junit</artifactId>
+		<version>4.12</version>
+		<scope>test</scope>
+		</dependency>
+		</dependencies>
+		
+		<build>
+		<plugins>
+		<plugin>
+		<groupId>org.springframework.boot</groupId>
+		<artifactId>spring-boot-maven-plugin</artifactId>
+		<configuration>
+			<excludes>
+					<exclude>
+								<groupId>org.projectlombok</groupId>
+											<artifactId>lombok</artifactId>
+													</exclude>
+														</excludes>
+														</configuration>
+														</plugin>
+														<plugin>
+														<groupId>org.apache.maven.plugins</groupId>
+														<artifactId>maven-surefire-plugin</artifactId>
+														<version>3.0.0-M5</version>
+														</plugin>
+														</plugins>
+														</build>
+														</project>
+													
