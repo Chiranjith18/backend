@@ -207,19 +207,20 @@ void exception_testAddFoodTruckVendor_InvalidOperatingRegion() throws Exception 
     }
 }
 ===== ./src/main/resources/application.properties =====
-
-spring.datasource.url=jdbc:mysql://sql12.freesqldatabase.com:3306/sql12803286?useSSL=false&serverTimezone=UTC
-spring.datasource.username=sql12803286
-spring.datasource.password=Rapis9WvDQ
+# MySQL Database settings (connects using Render environment variables)
+spring.datasource.url=${DATABASE_URL:jdbc:mysql://sql12.freesqldatabase.com:3306/sql12803286?useSSL=false&serverTimezone=UTC}
+spring.datasource.username=${DATABASE_USERNAME:sql12803286}
+spring.datasource.password=${DATABASE_PASSWORD:Rapis9WvDQ}
 spring.datasource.driver-class-name=com.mysql.cj.jdbc.Driver
+
+# JPA/Hibernate
 spring.jpa.hibernate.ddl-auto=update
 spring.jpa.show-sql=true
 spring.jpa.properties.hibernate.format_sql=true
 spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.MySQL8Dialect
 
-
-
-server.port=8080
+# Use dynamic port on Render (very important!)
+#server.port=${PORT:8080}
 
 # JWT Configuration
 jwt.secret=7ffNMsajDPZZtOWpN4JPUFonlH8E+GrcduPIVnJk8Wtw6hH/Mk9E/q6ZmDmVjKbY==
